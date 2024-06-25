@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>alluwannado</title>
+    <link rel="stylesheet" href="./style/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>alluwannado</h1>
+            <p>Express your thoughts beautifully</p>
+        </header>
+        <main>
+            <form id="userForm">
+                <label for="userInput">Enter your sentence:</label>
+                <input type="text" id="userInput" name="userInput" required>
+                <button type="submit">Submit</button>
+            </form>
+            <div id="response"></div>
+            <div id="readResponse"></div>
+        </main>
+        <footer>
+            <p>&copy; 2024 alluwannado. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDE9GWWMBG1rLO0Cpa-pHyijxHv5-dFtCs",
+            authDomain: "alluwannado.firebaseapp.com",
+            databaseURL: "https://alluwannado-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "alluwannado",
+            storageBucket: "alluwannado.appspot.com",
+            messagingSenderId: "290067914768",
+            appId: "1:290067914768:web:d91ce2168ec66539f82a95",
+            measurementId: "G-WC4YXZHTRT"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase();
+
+        function writeUserData(userId, userContent) {
+            const db = getDatabase();
+            const reference = ref(db, 'content/' + userId);
+            set(reference, {
+                content: userContent
+            }).then(() => {
+                console.log("Data saved successfully!");
+            }).catch((error) => {
+                console.error("Error saving data: ", error);
+            });
+        }
+
+        function readUserData(userId) {
+            const dbRef = ref(getDatabase());
+            get(child(dbRef, `content/${userId}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    console.log(snapshot.val());
+                    document.getElementById('readResponse').innerText = JSON.stringify(snapshot.val());
+                } else {
+                    console.log("No data available");
+                    document.getElementById('readResponse').innerText = "No data available";
+                }
+            }).catch((error) => {
+                console.error("Error reading data: ", error);
+            });
+        }
+
+        document.getElementById("userForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const userInput = document.getElementById("userInput").value;
+            writeUserData("testuser1", userInput);
+        });
+
+        readUserData("testuser1");
+        console.log("test hi");
+    </script>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>
